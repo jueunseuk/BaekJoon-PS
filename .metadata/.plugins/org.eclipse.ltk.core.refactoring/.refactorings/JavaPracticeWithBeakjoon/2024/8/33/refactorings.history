@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Copy 2 elements to &apos;JavaObject/src/(default package)&apos;&#x0D;&#x0A;- Original project: &apos;JavaPracticeWithBeakjoon&apos;&#x0D;&#x0A;- Destination element: &apos;JavaObject/src/(default package)&apos;&#x0D;&#x0A;- Original elements:&#x0D;&#x0A;     Main_BJ_5635_사람정보다루기.java&#x0D;&#x0A;     Main_BJ_10825_객체다루기.java" description="Copy compilation units" destination="=JavaObject/src&lt;" element1="/src&lt;{Main_BJ_5635_사람정보다루기.java" element2="/src&lt;{Main_BJ_10825_객체다루기.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1723775109463" units="2" version="1.0"/>
-</session>
