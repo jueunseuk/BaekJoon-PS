@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename compilation unit &apos;Main_16472_고냥이.java&apos; to &apos;Main_9024_두수의합.java&apos;&#x0D;&#x0A;- Original project: &apos;Two_Pointer&apos;&#x0D;&#x0A;- Original element: &apos;Main_16472_고냥이.java&apos;&#x0D;&#x0A;- Renamed element: &apos;Main_9024_두수의합.java&apos;" description="Rename compilation unit &apos;Main_16472_고냥이.java&apos;" flags="2" id="org.eclipse.jdt.ui.rename.compilationunit" input="/src&lt;{Main_16472_고냥이.java" name="Main_9024_두수의합.java" references="false" stamp="1728644873662" version="1.0"/>
+</session>

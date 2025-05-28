@@ -1,0 +1,116 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
+
+/**
+ * BOJ 33933 - 인덕이와 산책
+ * shortest time for Inha to reach N, considering she can meet Induck who moves along a cycle
+ */
+public class Main_33933_인덕이와산책 {
+
+    private static final int INF = 1_000_000_000;
+
+    static int N, M, T;
+    static List<List<Integer>> adj;   // adjacency list
+    static int[] cycle;               // Induck’s cycle (length T)
+    static int[] distToN;             // steps from each cycle index to the first appearance of N
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        T = Integer.parseInt(st.nextToken());
+
+        adj = new ArrayList<>();
+        for (int i = 0; i <= N; i++) adj.add(new ArrayList<>());
+
+        for (int i = 0; i < M; i++) {
+            st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            adj.get(a).add(b);
+            adj.get(b).add(a);
+        }
+
+        cycle = new int[T];
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < T; i++) cycle[i] = Integer.parseInt(st.nextToken());
+
+        precomputeDistToN();
+
+        System.out.println(bfs());
+    }
+
+    /** distToN[i] = minutes Induck needs to reach N starting from cycle index i (including 0 if already N) */
+    private static void precomputeDistToN() {
+        distToN = new int[T];
+        int idxN = -1;
+        for (int i = 0; i < T; i++) if (cycle[i] == N) { idxN = i; break; }
+        for (int i = 0; i < T; i++) distToN[i] = (idxN - i + T) % T;
+    }
+
+    /** 0-1 BFS (all edges cost 1) on state ⟨vertex, time mod T⟩ */
+    private static int bfs() {
+        /* If Inha meets Induck at start (time 0) */
+        if (cycle[0] == 1) return distToN[0];
+
+        int[][] best = new int[N + 1][T];
+        for (int i = 1; i <= N; i++) Arrays.fill(best[i], INF);
+
+        Deque<State> q = new ArrayDeque<>();
+        best[1][0] = 0;
+        q.offer(new State(1, 0));
+
+        while (!q.isEmpty()) {
+            State cur = q.poll();
+            int spent = best[cur.v][cur.t];
+
+            int nextT = (cur.t + 1) % T;     // time index after 1 minute
+            int nextSpent = spent + 1;
+
+            /* 1) Stay */
+            if (processTransition(cur.v, nextT, nextSpent, best, q)) return 0;  // already printed
+
+            /* 2) Move to neighbours */
+            for (int nxt : adj.get(cur.v)) {
+                if (processTransition(nxt, nextT, nextSpent, best, q)) return 0;  // printed and done
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Handle transition to (nextV, nextT) taking nextSpent minutes in total.
+     * Prints the answer and returns true when the goal is reached (either by walking to N or meeting Induck).
+     */
+    private static boolean processTransition(int nextV, int nextT, int nextSpent,
+                                             int[][] best, Deque<State> q) {
+        /* Meet Induck after this minute */
+        if (nextV == cycle[nextT]) {
+            System.out.println(nextSpent + distToN[nextT]);
+            return true;
+        }
+
+        /* Reach N by walking */
+        if (nextV == N) {
+            System.out.println(nextSpent);
+            return true;
+        }
+
+        /* Continue BFS if this state is better */
+        if (best[nextV][nextT] > nextSpent) {
+            best[nextV][nextT] = nextSpent;
+            q.offer(new State(nextV, nextT));
+        }
+        return false;
+    }
+
+    /** BFS state */
+    private static class State {
+        int v, t;                   // vertex, time mod T
+        State(int v, int t) { this.v = v; this.t = t; }
+    }
+}

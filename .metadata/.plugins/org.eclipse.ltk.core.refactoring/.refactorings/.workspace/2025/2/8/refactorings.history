@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename Java project &apos;kmp&apos; to &apos;KMPnZ&apos;&#x0D;&#x0A;- Original element: &apos;kmp&apos;&#x0D;&#x0A;- Renamed element: &apos;kmp&apos;&#x0D;&#x0A;- Update references to refactored element" description="Rename Java project &apos;kmp&apos;" flags="7" id="org.eclipse.jdt.ui.rename.java.project" input="=kmp" name="KMPnZ" references="true" stamp="1740041873937" version="1.0"/>
+</session>

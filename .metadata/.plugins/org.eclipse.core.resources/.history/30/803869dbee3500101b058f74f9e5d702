@@ -1,0 +1,100 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.List;
+import java.util.StringTokenizer;
+
+public class Main_33933_인덕이와산책 {
+    static final int INF = Integer.MAX_VALUE / 2;
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
+        int T = Integer.parseInt(st.nextToken());
+
+        List<Integer>[] adj = new List[N+1];
+        for (int i = 1; i <= N; i++) adj[i] = new ArrayList<>();
+        for (int i = 0; i < M; i++) {
+            st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken()), b = Integer.parseInt(st.nextToken());
+            adj[a].add(b);
+            adj[b].add(a);
+        }
+
+        // 인덕이 사이클
+        int[] c = new int[T];
+        st = new StringTokenizer(br.readLine());
+        List<Integer> nPositions = new ArrayList<>();
+        for (int i = 0; i < T; i++) {
+            c[i] = Integer.parseInt(st.nextToken());
+            if (c[i] == N) nPositions.add(i);
+        }
+        // N이 사이클에 반드시 포함된다고 했으니 nPositions non-empty
+
+        // nextDist[t] = t에서 시작해서 사이클을 돌아 다음에 N이 나올 때까지 걸리는 시간
+        int[] nextDist = new int[T];
+        Collections.sort(nPositions);
+        for (int i = 0; i < T; i++) {
+            // i 이상인 nPositions 중 최소
+            int j = Collections.binarySearch(nPositions, i);
+            if (j < 0) j = -j - 1;
+            if (j < nPositions.size()) {
+                nextDist[i] = nPositions.get(j) - i;
+            } else {
+                // 사이클 끝까지 돌았다가 맨 앞으로
+                nextDist[i] = (nPositions.get(0) + T) - i;
+            }
+        }
+
+        // 2차원 cost 배열: cost[u][t] = u에서 시간 mod T == t 상태로 올 때까지의 최소 시간
+        int[][] cost = new int[N+1][T];
+        for (int i = 1; i <= N; i++) Arrays.fill(cost[i], INF);
+
+        Deque<int[]> q = new ArrayDeque<>();
+        cost[1][0] = 0;
+        q.add(new int[]{1, 0});
+
+        int answer = INF;
+
+        while (!q.isEmpty()) {
+            int[] cur = q.poll();
+            int u = cur[0], t = cur[1], d = cost[u][t];
+            
+            // 1) 직접 걷기로 N 도착
+            if (u == N) {
+                answer = Math.min(answer, d);
+                // BFS이므로 이 상태 이후는 모두 d+ ≥ answer, 
+                // 그러나 인덕이 따라가기 후보가 더 작을 수 있으니 계속 탐색
+            }
+            // 2) 인덕이 만나 따라가기
+            if (u == c[t]) {
+                answer = Math.min(answer, d + nextDist[t]);
+            }
+
+            // 다음 시간
+            int t2 = (t + 1) % T;
+            int nd = d + 1;
+            // 3) 제자리 휴식
+            if (cost[u][t2] > nd) {
+                cost[u][t2] = nd;
+                q.add(new int[]{u, t2});
+            }
+            // 4) 인접 이동
+            for (int v : adj[u]) {
+                if (cost[v][t2] > nd) {
+                    cost[v][t2] = nd;
+                    q.add(new int[]{v, t2});
+                }
+            }
+        }
+
+        System.out.println(answer >= INF ? -1 : answer);
+    }
+}
